@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 
+### This module depends on PySerial, a cross platform Python module
+### to leverage the communication with the serial port.
 ### http://pyserial.sourceforge.net/pyserial.html#installation
-### workon ksu
+### If you have `pip` installed on your computer, getting PySerial is as easy as
 ### pip install pyserial
+
 import serial
 
 class MaxiGauge (object):
