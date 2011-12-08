@@ -61,13 +61,14 @@ class MaxiGauge (object):
     def pressure(self, sensor):
         if sensor < 1 or sensor >6: raise MaxiGaugeError('Sensor can only be between 1 and 6. You choose ' + str(sensor))
         reading = self.send('PR%d' % sensor, 1)  ## reading will have the form x,x.xxxEsx <CR><LF> (see p.88)
-        r = reading[0].split(',' , 1)
-        return PressureReading(sensor,int(r[0]),float(r[1]))
+        r = reading[0].split(',')
+        return PressureReading(sensor,int(r[0]),float(r[-1]))
 
     def debugMessage(self, message):
         if self.debug: print(repr(message))
 
     def send(self, mnemonic, numEnquiries = 0):
+        self.connection.flushInput()
         self.write(mnemonic+LINE_TERMINATION)
         #if mnemonic != C['ETX']: self.read()
         #self.read()
