@@ -31,7 +31,7 @@ class MaxiGauge (object):
     def __init__(self, serialPort, baud=9600, debug=False):
         self.debug=debug
         try:
-            self.connection = serial.Serial(serialPort, baudrate=baud, timeout=0.05)
+            self.connection = serial.Serial(serialPort, baudrate=baud, timeout=0.2)
         except serial.serialutil.SerialException as se:
             raise MaxiGaugeError(se)
         #self.send(C['ETX']) ### We might reset the connection first, but it doesn't really matter:
