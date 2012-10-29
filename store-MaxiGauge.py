@@ -32,4 +32,4 @@ while True:
 
     # do this every second
     endTime = time.time()-startTime
-    time.sleep(1.0-endTime)
+    time.sleep(max([0.0, 1. - endTime]))
