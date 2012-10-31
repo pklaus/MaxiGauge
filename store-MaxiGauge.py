@@ -25,7 +25,8 @@ while True:
         if sensor.status in [0,1,2]:
             line += "%.3E" % sensor.pressure
         line += ", "
-    print line[0:-2] # omit the last comma and space
+    line = line[0:-2] # omit the last comma and space
+    print line
     sys.stdout.flush()
     logfile.write(line+'\n')
     logfile.flush()
