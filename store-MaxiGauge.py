@@ -19,7 +19,7 @@ while True:
     except MaxiGaugeError, mge:
         print mge
         continue
-    line = ""
+    line = "%d, " % int(time.time())
     for sensor in ps:
         #print sensor
         if sensor.status in [0,1,2]:
