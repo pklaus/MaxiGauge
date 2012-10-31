@@ -129,7 +129,7 @@ def pressure_data(maxigauge):
     ps = maxigauge.pressures()
     for i, sensor in enumerate(ps):
         if sensor.status in [0,1,2]:
-            status['gauge%d' % (i+1)] = sensor.pressure
+            status['gauge %d' % (i+1)] = sensor.pressure
     return status
 
 #@api.route('/pressures')

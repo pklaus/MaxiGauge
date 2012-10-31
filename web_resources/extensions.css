@@ -67,6 +67,7 @@ div, span, p, td {
 	outline: none;
 	cursor: pointer;
 }
+/*
 #legend {
 	background-color: white;
 	margin-left: 0;
@@ -83,6 +84,7 @@ div, span, p, td {
 #legend ul {
 	padding: 0;
 }
+*/
 h1 {
 	font-family: Franklin Gothic Medium, UnDotum, Helvetica, Arial;
 	font-weight: normal;
