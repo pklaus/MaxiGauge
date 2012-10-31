@@ -158,13 +158,9 @@ root.mount(api, '/api')
 def static(path):
     return static_file(path, root='./web_resources')
 
-@root.route('/streaming')
-def index():
-    return static('streaming.html')
-
 @root.route('/')
 def index():
-    return static('webserver-ajax-template.html')
+    return static('index.html')
 
 ## Run with cherrypy server via IPv4:
 run( root, server='cherrypy', host="0.0.0.0", port=8080)
