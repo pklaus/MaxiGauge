@@ -26,6 +26,7 @@
 ### pip install pyserial
 
 import serial
+from threading import Timer
 
 class MaxiGauge (object):
     def __init__(self, serialPort, baud=9600, debug=False):
@@ -68,6 +69,11 @@ class MaxiGauge (object):
         except:
             raise MaxiGaugeError("Problem interpreting the returned line:\n%s" % reading)
         return PressureReading(sensor, status, pressure)
+
+    def continuous_pressure_updates(self, update_time):
+        self.cached_pressures = self.pressures()
+        self.t = Timer(update_time, self.continuous_pressure_updates, [update_time],{} )
+        self.t.start()
 
     def debugMessage(self, message):
         if self.debug: print(repr(message))

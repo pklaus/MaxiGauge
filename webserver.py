@@ -65,6 +65,7 @@ keyword argument.'''
             ### Initialize an instance of the MaxiGauge controller with
             ### the handle of the serial terminal it is connected to
             self.maxigauge = MaxiGauge(self.device)
+            self.maxigauge.continuous_pressure_updates(1.0)
         except Exception, e:
             raise PluginError("Could not connect to the MaxiGauge (on port %s). Error: %s" % (self.device, e) )
 
@@ -126,7 +127,8 @@ api.install(mg_plugin)
 def pressure_data(maxigauge):
     status = dict()
     ### Read out the pressure gauges
-    ps = maxigauge.pressures()
+    #ps = maxigauge.pressures()
+    ps = maxigauge.cached_pressures
     for i, sensor in enumerate(ps):
         if sensor.status in [0,1,2]:
             status['gauge %d' % (i+1)] = sensor.pressure
