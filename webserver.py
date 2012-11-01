@@ -163,6 +163,8 @@ def static(path):
 def index():
     return static('index.html')
 
+print "Press Ctrl-C twice to stop this web server!"
+
 ## Run with cherrypy server via IPv4:
 run( root, server='cherrypy', host="0.0.0.0", port=8080)
 ## Run with cherrypy server via IPv6:

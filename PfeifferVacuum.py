@@ -27,6 +27,7 @@
 
 import serial
 import time
+import signal
 
 class MaxiGauge (object):
     def __init__(self, serialPort, baud=9600, debug=False):
@@ -70,9 +71,14 @@ class MaxiGauge (object):
             raise MaxiGaugeError("Problem interpreting the returned line:\n%s" % reading)
         return PressureReading(sensor, status, pressure)
 
+    def signal_handler(self, sig, frame):
+        self.stopping_continuous_update.set()
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+
     def start_continuous_pressure_updates(self, update_time, log_every = 0):
         from threading import Thread, Event
         self.stopping_continuous_update =  Event()
+        signal.signal(signal.SIGINT, self.signal_handler)
         self.update_time = update_time
         self.log_every = log_every
         self.t = Thread(target = self.continuous_pressure_updates)
@@ -92,6 +98,8 @@ class MaxiGauge (object):
             while not self.stopping_continuous_update.isSet() and (self.update_time - (time.time()-startTime) > .2):
                 time.sleep(.2)
             time.sleep(max([0., self.update_time - (time.time()-startTime)]))
+        #from thread import interrupt_main
+        #interrupt_main()
 
 
     def log_to_file(self):
