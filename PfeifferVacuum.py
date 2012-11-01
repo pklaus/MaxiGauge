@@ -81,6 +81,7 @@ class MaxiGauge (object):
         signal.signal(signal.SIGINT, self.signal_handler)
         self.update_time = update_time
         self.log_every = log_every
+        self.update_counter = 1
         self.t = Thread(target = self.continuous_pressure_updates)
         self.t.daemon = True
         self.t.start()
@@ -88,16 +89,19 @@ class MaxiGauge (object):
     def continuous_pressure_updates(self):
         while not self.stopping_continuous_update.isSet():
             startTime = time.time()
-            try:
-                self.update_counter += 1
-            except:
-                self.update_counter = 1
+            self.update_counter += 1
             self.cached_pressures = self.pressures()
-            if self.log_every > 0 and self.update_counter%self.log_every == 0: self.log_to_file()
+            if self.log_every > 0 and (self.update_counter%self.log_every == 0):
+                self.log_to_file()
             time.sleep(0.1) # we want a minimum pause of 0.1 s
             while not self.stopping_continuous_update.isSet() and (self.update_time - (time.time()-startTime) > .2):
                 time.sleep(.2)
             time.sleep(max([0., self.update_time - (time.time()-startTime)]))
+        #sys.stderr.write(line)
+        try:
+            self.logfile.flush()
+        except:
+            pass
         #from thread import interrupt_main
         #interrupt_main()
 
