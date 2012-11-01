@@ -20,6 +20,8 @@
 
 
 <div id="content">
+	<h3>Vacuum Gauge Pressure Readings</h3>
+	<p>Values of the gauges attached to the HHG setup in the COLTRIMS laboratory:</p>
 	<div id="chart_container">
 		<div id="chart"></div>
 		<div id="legend_container">
@@ -49,7 +51,7 @@ var graph = new Rickshaw.Graph( {
 		{ name: 'gauge 1' }
 		], undefined, {
 		timeInterval: tv,
-		maxDataPoints: 300,
+		maxDataPoints: 450,
 		timeBase: new Date().getTime() / 1000
 	}) 
 } );
@@ -93,6 +95,7 @@ var iv = setInterval( function() {
 		url:      '/api/pressures',
 		method:   'GET',
 		dataType: 'json',
+		timeout:  1000,
 		success:  function(pressures) {
 			var data = pressures; //[ pressures.pressure_readings ];
 			/// Transform to logarithmic values
@@ -100,6 +103,10 @@ var iv = setInterval( function() {
 			// 	data[i] = Math.log(1e10*data[i]) / Math.LN10;
 			// }
 			graph.series.addData(data);
+			graph.render();
+		},
+		error: function(xhr, textStatus, errorThrown){
+			graph.series.addData({});
 			graph.render();
 		}
 	});

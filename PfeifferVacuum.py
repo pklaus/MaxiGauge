@@ -26,7 +26,7 @@
 ### pip install pyserial
 
 import serial
-from threading import Timer
+import time
 
 class MaxiGauge (object):
     def __init__(self, serialPort, baud=9600, debug=False):
@@ -70,10 +70,44 @@ class MaxiGauge (object):
             raise MaxiGaugeError("Problem interpreting the returned line:\n%s" % reading)
         return PressureReading(sensor, status, pressure)
 
-    def continuous_pressure_updates(self, update_time):
-        self.cached_pressures = self.pressures()
-        self.t = Timer(update_time, self.continuous_pressure_updates, [update_time],{} )
+    def start_continuous_pressure_updates(self, update_time, log_every = 0):
+        from threading import Thread, Event
+        self.stopping_continuous_update =  Event()
+        self.update_time = update_time
+        self.log_every = log_every
+        self.t = Thread(target = self.continuous_pressure_updates)
+        self.t.daemon = True
         self.t.start()
+
+    def continuous_pressure_updates(self):
+        while not self.stopping_continuous_update.isSet():
+            startTime = time.time()
+            try:
+                self.update_counter += 1
+            except:
+                self.update_counter = 1
+            self.cached_pressures = self.pressures()
+            if self.log_every > 0 and self.update_counter%self.log_every == 0: self.log_to_file()
+            time.sleep(0.1) # we want a minimum pause of 0.1 s
+            while not self.stopping_continuous_update.isSet() and (self.update_time - (time.time()-startTime) > .2):
+                time.sleep(.2)
+            time.sleep(max([0., self.update_time - (time.time()-startTime)]))
+
+
+    def log_to_file(self):
+        try:
+            self.logfile
+        except:
+            self.logfile = file('measurement-data.txt', 'a')
+        line = "%d, " % int(time.time())
+        for sensor in self.cached_pressures:
+            #print sensor
+            if sensor.status in [0,1,2]:
+                line += "%.3E" % sensor.pressure
+            line += ", "
+        line = line[0:-2] # omit the last comma and space
+        self.logfile.write(line+'\n')
+        #self.logfile.flush()
 
     def debugMessage(self, message):
         if self.debug: print(repr(message))
@@ -126,11 +160,15 @@ class MaxiGauge (object):
         return returncode[:-(len(LINE_TERMINATION)+1)]
         
     def disconnect(self):
-        #self.send(C['ETX'])
-        if hasattr(self, 'connection') and self.connection: self.connection.close()
+        try:
+            self.stopping_continuous_update.set()
+        except:
+            pass
 
     def __del__(self):
         self.disconnect()
+        #self.send(C['ETX'])
+        if hasattr(self, 'connection') and self.connection: self.connection.close()
 
 class PressureReading(object):
     def __init__(self, id, status, pressure):

@@ -65,7 +65,7 @@ keyword argument.'''
             ### Initialize an instance of the MaxiGauge controller with
             ### the handle of the serial terminal it is connected to
             self.maxigauge = MaxiGauge(self.device)
-            self.maxigauge.continuous_pressure_updates(1.0)
+            self.maxigauge.start_continuous_pressure_updates(.5, 2)
         except Exception, e:
             raise PluginError("Could not connect to the MaxiGauge (on port %s). Error: %s" % (self.device, e) )
 
@@ -96,7 +96,6 @@ keyword argument.'''
 
     def close(self):
         self.maxigauge.disconnect()
-        self.maxigauge = None
 
 import time
 
@@ -171,3 +170,5 @@ run( root, server='cherrypy', host="0.0.0.0", port=8080)
 
 ## Run with bottle's standard server (IPv4):
 #run( root, host="localhost", port=8080)
+#run( root, host="0.0.0.0", port=8080)
+#run( root, host="0.0.0.0", port=8080, debug=True)
