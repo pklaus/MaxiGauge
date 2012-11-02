@@ -98,10 +98,8 @@ class MaxiGauge (object):
                 time.sleep(.2)
             time.sleep(max([0., self.update_time - (time.time()-startTime)]))
         #sys.stderr.write(line)
-        try:
-            self.logfile.flush()
-        except:
-            pass
+        if self.log_every > 0 and (self.update_counter%self.log_every == 0):
+            self.flush_logfile()
         #from thread import interrupt_main
         #interrupt_main()
 
@@ -119,7 +117,13 @@ class MaxiGauge (object):
             line += ", "
         line = line[0:-2] # omit the last comma and space
         self.logfile.write(line+'\n')
-        #self.logfile.flush()
+        #self.flush_logfile()
+
+    def flush_logfile(self):
+        try:
+            self.logfile.flush()
+        except:
+            pass
 
     def debugMessage(self, message):
         if self.debug: print(repr(message))
