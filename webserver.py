@@ -36,7 +36,9 @@ device = '/dev/ttyUSB0'
 ### Load the module:
 from PfeifferVacuum import MaxiGauge, MaxiGaugeError
 
-from bottle import Bottle, run, request, static_file, HTTPError, PluginError
+from bottle import Bottle, run, request, static_file, HTTPError, PluginError, response
+
+import json
 
 import inspect
 
@@ -133,6 +135,47 @@ def pressure_data(maxigauge):
             status['gauge %d' % (i+1)] = sensor.pressure
     return status
 
+@api.route('/pressure_history_csv')
+def pressure_history_csv(maxigauge):
+    maxigauge.flush_logfile()
+    return static_file('measurement-data.txt', root='./')
+
+retdata = []
+@api.route('/pressure_history')
+def pressure_history(maxigauge):
+    global retdata
+    response.content_type = 'application/json'
+    if len(retdata)>0: return json.dumps(retdata)
+    maxigauge.flush_logfile()
+    f = open( 'measurement-data.txt', 'r' )
+    import csv
+    log = csv.reader(f)
+
+    # Get the 1st line, assuming it contains the column titles
+    fieldnames = log.next()
+    
+    cols = []
+    i = 0
+    for fieldname in fieldnames:
+        if fieldname.strip() != "" and fieldname != 'Seconds':
+            cols.append(i)
+        i += 1
+    
+    retdata = []
+    for n in cols:
+            color = 'lightblue' if n%2 == 0 else 'steelblue'
+            retdata.append({ 'name': fieldnames[n], 'data': [], 'color': color })
+    
+    i = 0
+    for row in log:
+        if len(row) != len(fieldnames): continue
+        i = i + 1
+        if i%100 != 1: continue
+        print i
+        for k,j in enumerate(cols):
+            retdata[k]['data'].append({'x': int(row[0]), 'y': 0.0 if row[j].strip() == '' else float(row[j])})
+    return json.dumps(retdata)
+
 #@api.route('/pressures')
 #def pressures(maxigauge):
 #    status = dict()
@@ -158,6 +201,18 @@ root.mount(api, '/api')
 @root.route('/static/<path:path>')
 def static(path):
     return static_file(path, root='./web_resources')
+
+@root.route('/live_cubism')
+def history():
+    return static('live_cubism.html')
+
+@root.route('/history_d3')
+def history():
+    return static('history_d3.html')
+
+@root.route('/history')
+def history():
+    return static('history.html')
 
 @root.route('/')
 def index():
