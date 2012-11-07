@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<head>
 <meta charset="utf-8">
 <style>
 
@@ -9,12 +10,9 @@ body {
 .axis path,
 .axis line {
   fill: none;
-  stroke: #000;
+  stroke: #EEE;
   shape-rendering: crispEdges;
-}
-
-.x.axis path {
-  display: none;
+  stroke-width: 0.5px
 }
 
 .line {
@@ -23,14 +21,36 @@ body {
   stroke-width: 1.5px;
 }
 
+.axis {
+  shape-rendering: crispEdges;
+}
+.x.axis line {
+  stroke: #DDD;
+}
+.x.axis .minor {
+  stroke-opacity: .5;
+}
+
+#chart {
+  width: 90%;
+  height: 100%;
+}
+
 </style>
+<title>Long Term Pressure</title>
+</head>
 <body>
+<div id='content'>
+    <h3>Vacuum Gauge Pressure Readings</h3>
+    <p>Values of the gauges attached to the HHG setup in the COLTRIMS laboratory:</p>
+    <div id="chart"></div>
+</div>
 <script src="static/d3.v3.js"></script>
 <script>
 
 var margin = {top: 20, right: 80, bottom: 30, left: 50},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    width = 1280 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
 
 var x = d3.time.scale()
     .range([0, width]);
@@ -42,48 +62,50 @@ var color = d3.scale.category10();
 
 var xAxis = d3.svg.axis()
     .scale(x)
+    .tickSize(-height)
     .orient("bottom");
 
 var yAxis = d3.svg.axis()
     .scale(y)
+    .tickSize(-width)
     .orient("left");
 
 var line = d3.svg.line()
     //.interpolate("basis")
     .x(function(d) { return x(d.date); })
     .y(function(d) { return y(d.pressure); })
-    /*.defined(
+    .defined(
         function(d) {
-            if (isNaN(d.pressure) || d.pressure < 0.)
-                d.pressure;
-            return !isNaN(d.pressure) && d.pressure >= 0.0;
+            return !isNaN(d.pressure) && (d.pressure > 0.0) && (d.pressure != null);
         }
-    )*/
+    )
     ;
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#chart").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.csv("http://messgeraet01.atom.uni-frankfurt.de:8080/api/pressure_history_csv?lines=2000", function(error, data) {
+d3.csv("http://messgeraet01.atom.uni-frankfurt.de:8080/api/pressure_history_csv?lines=1000&fast", function(error, data) {
   color.domain(d3.keys(data[0]).filter(function(key) { return (key !== "Seconds") && (key != " "); }));
 
   data.forEach(function(d) {
     d.Seconds = new Date(d.Seconds * 1000);
   });
 
-  for(var i = 0; i < data.length; i++) {
+  // Thin out / Slice the data so that we don't crash our Browser
+  /*for(var i = 0; i < data.length; i++) {
     data.splice(i+1,Math.round(data.length/1000));
-  }
+  }*/
 
   var cities = color.domain().map(function(name) {
     return {
       name: name,
       values: data.map(function(d) {
         var val = +d[name];
-        if (isNaN(val)) val = -1.;
+        //if (isNaN(val)) val = null;
+        if (val == 0) val = null;
         return {date: d.Seconds, pressure: val};
       })
     };
@@ -131,3 +153,5 @@ d3.csv("http://messgeraet01.atom.uni-frankfurt.de:8080/api/pressure_history_csv?
 });
 
 </script>
+</body>
+</html>

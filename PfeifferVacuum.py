@@ -37,6 +37,7 @@ class MaxiGauge (object):
         except serial.serialutil.SerialException as se:
             raise MaxiGaugeError(se)
         #self.send(C['ETX']) ### We might reset the connection first, but it doesn't really matter:
+        self.logfilename = 'measurement-data.txt'
 
     def checkDevice(self):
         message = "The Display Contrast is currently set to %d (out of 20).\n" % self.displayContrast()
@@ -87,6 +88,29 @@ class MaxiGauge (object):
         self.t.start()
 
     def continuous_pressure_updates(self):
+
+        ## The following lines were written in order to keep the pressure history in memory.
+        ## Unfortunately this takes too long to load on a Raspberry Pi for larger data files.
+        #f = open( self.logfilename, 'r' )
+        #import csv
+        #log = csv.reader(f)
+        ## Get the 1st line, assuming it contains the column titles
+        #fieldnames = log.next()
+        #cols = []
+        #i = 0
+        #for fieldname in fieldnames:
+        #    if i == 0 : continue
+        #    if fieldname.strip() != "":
+        #        cols.append(i)
+        #    i += 1
+        #history = []
+        #for row in log:
+        #    if len(row) != len(fieldnames): continue
+        #    history.append([int(row[0])] + [float(val) if val.strip() else None for val in row[1:]])
+        #self.history = history
+        #log = None
+        #f.close()
+
         while not self.stopping_continuous_update.isSet():
             startTime = time.time()
             self.update_counter += 1
@@ -108,7 +132,7 @@ class MaxiGauge (object):
         try:
             self.logfile
         except:
-            self.logfile = file('measurement-data.txt', 'a')
+            self.logfile = file(self.logfilename, 'a')
         line = "%d, " % int(time.time())
         for sensor in self.cached_pressures:
             #print sensor
@@ -117,6 +141,7 @@ class MaxiGauge (object):
             line += ", "
         line = line[0:-2] # omit the last comma and space
         self.logfile.write(line+'\n')
+        #self.history.append([int(time.time())] + [sensor.pressure if sensor.status in [0,1,2] else None for sensor in self.cached_pressures])
         #self.flush_logfile()
 
     def flush_logfile(self):

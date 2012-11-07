@@ -32,7 +32,7 @@
 # http://localhost:8080
 
 device = '/dev/ttyUSB0'
-logfile = 'measurement-data.txt'
+logfilename = 'measurement-data.txt'
 
 ### Load the module:
 from PfeifferVacuum import MaxiGauge, MaxiGaugeError
@@ -136,6 +136,22 @@ def pressure_data(maxigauge):
             status['gauge %d' % (i+1)] = sensor.pressure
     return status
 
+#@api.route('/cached_pressure_history_csv')
+#def cached_pressure_history_csv(maxigauge):
+#    try:
+#        number_of_lines = int(request.query.lines)
+#    except:
+#        return to_csv(maxigauge.history)
+#    print_every = len(maxigauge.history) / number_of_lines
+#    #response.content_type = 'text/csv'
+#    response.content_type = 'text/plain'
+#    return to_csv(maxigauge.history[::print_every])
+
+#def to_csv(data):
+#    output = []
+#    for row in data:
+#        output.append("%d%s" % (row[0], "".join([", %.3E" % val for val in row[1:]] )))
+
 from os.path import getsize
 @api.route('/pressure_history_csv')
 def pressure_history_csv(maxigauge):
@@ -143,19 +159,28 @@ def pressure_history_csv(maxigauge):
     try:
         number_of_lines = int(request.query.lines)
     except:
-        return static_file(logfile, root='./')
-    bytes = getsize(logfile)
+        return static_file(logfilename, root='./')
+    bytes = getsize(logfilename)
     approximate_number_of_lines = (bytes - 33) / 60
     print_every = approximate_number_of_lines / (number_of_lines - 1)
-    output = []
-    i = -1
-    for line in open( logfile ):
-        if (i < 0) or (i % print_every == 0):
-            output.append(line)
-        i += 1
     #response.content_type = 'text/csv'
     response.content_type = 'text/plain'
-    return output
+    request.query.fast
+    import subprocess
+    return subprocess.check_output(['./extract_every_nth_line', 'measurement-data.txt', str(print_every)])
+    #try:
+    #    request.query.fast
+    #    import subprocess
+    #    return subprocess.check_output(['./extract_every_nth_line', 'measurement-data.txt', str(100)])
+    #except AttributeError:
+    #    pass
+    #output = []
+    #i = -1
+    #for line in open( logfilename ):
+    #    if (i < 0) or (i % print_every == 0):
+    #        output.append(line)
+    #    i += 1
+    #return output
 
 retdata = []
 @api.route('/pressure_history')
@@ -164,7 +189,7 @@ def pressure_history(maxigauge):
     response.content_type = 'application/json'
     if len(retdata)>0: return json.dumps(retdata)
     maxigauge.flush_logfile()
-    f = open( logfile, 'r' )
+    f = open( logfilename, 'r' )
     import csv
     log = csv.reader(f)
 
