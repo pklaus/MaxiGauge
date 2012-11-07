@@ -1,0 +1,119 @@
+<!doctype>
+<!-- similar to http://code.shutterstock.com/rickshaw/examples/fixed.html -->
+<head>
+	<link type="text/css" rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css">
+
+	<link type="text/css" rel="stylesheet" href="static/graph.css">
+	<link type="text/css" rel="stylesheet" href="static/detail.css">
+	<link type="text/css" rel="stylesheet" href="static/legend.css">
+	<link type="text/css" rel="stylesheet" href="static/extensions.css">
+
+	<script src="static/d3.v2.js"></script>
+
+	<script src="static/jquery.min.js"></script>
+	<script src="static/jquery-ui.min.js"></script>
+
+	<script src="static/rickshaw.js"></script>
+
+<title>Live Pressure Values</title>
+</head>
+<body>
+
+
+<div id="content">
+	<h3>Vacuum Gauge Pressure Readings</h3>
+	<p>Values of the gauges attached to the HHG setup in the COLTRIMS laboratory:</p>
+	<div id="chart_container">
+		<div id="chart"></div>
+		<div id="legend_container">
+			<div id="legend"></div>
+		</div>
+		<div id="slider"></div>
+	</div>
+</div>
+
+<script>
+
+var tv = 500;
+
+// instantiate our graph!
+var graph = new Rickshaw.Graph( {
+	element: document.getElementById("chart"),
+	width: 900,
+	height: 500,
+	renderer: 'line',
+        interpolation: 'linear',
+	series: new Rickshaw.Series.FixedDuration([
+		{ name: 'gauge 6' },
+		{ name: 'gauge 5' },
+		{ name: 'gauge 4' },
+		{ name: 'gauge 3' },
+		{ name: 'gauge 2' },
+		{ name: 'gauge 1' }
+		], undefined, {
+		timeInterval: tv,
+		maxDataPoints: 450,
+		timeBase: new Date().getTime() / 1000
+	}) 
+} );
+
+graph.render();
+
+var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+	graph: graph,
+	yFormatter: function(y) { return y.toPrecision(3) + " mbar" }
+} );
+
+var legend = new Rickshaw.Graph.Legend( {
+	graph: graph,
+	element: document.getElementById('legend')
+
+} );
+
+var shelving = new Rickshaw.Graph.Behavior.Series.Toggle( {
+	graph: graph,
+	legend: legend
+} );
+
+var yAxis = new Rickshaw.Graph.Axis.Y({
+    graph: graph,
+    tickFormat: function(y) { return y.toPrecision(3) + " mbar" }
+});
+
+yAxis.render();
+
+var axes = new Rickshaw.Graph.Axis.Time( {
+	graph: graph
+} );
+axes.render();
+
+// add some data every so often
+
+var i = 0;
+var iv = setInterval( function() {
+
+	$.ajax({
+		url:      '/api/pressures',
+		method:   'GET',
+		dataType: 'json',
+		timeout:  1000,
+		success:  function(pressures) {
+			var data = pressures; //[ pressures.pressure_readings ];
+			/// Transform to logarithmic values
+			// for (var i in data) {
+			// 	data[i] = Math.log(1e10*data[i]) / Math.LN10;
+			// }
+			graph.series.addData(data);
+			graph.render();
+		},
+		error: function(xhr, textStatus, errorThrown){
+			graph.series.addData({});
+			graph.render();
+		}
+	});
+
+}, tv );
+
+</script>
+
+</body>

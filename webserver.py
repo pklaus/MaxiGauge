@@ -245,12 +245,16 @@ def static(path):
     return static_file(path, root='./web_resources')
 
 @root.route('/live_cubism')
-def history():
+def live_cubism():
     return static('live_cubism.html')
 
-@root.route('/history_d3')
-def history():
-    return static('history_d3.html')
+@root.route('/history_rickshaw')
+def history_rickshaw():
+    return static('history_rickshaw.html')
+
+@root.route('/live')
+def live():
+    return static('live.html')
 
 @root.route('/history')
 def history():
