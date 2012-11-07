@@ -32,6 +32,7 @@
 # http://localhost:8080
 
 device = '/dev/ttyUSB0'
+logfile = 'measurement-data.txt'
 
 ### Load the module:
 from PfeifferVacuum import MaxiGauge, MaxiGaugeError
@@ -135,10 +136,26 @@ def pressure_data(maxigauge):
             status['gauge %d' % (i+1)] = sensor.pressure
     return status
 
+from os.path import getsize
 @api.route('/pressure_history_csv')
 def pressure_history_csv(maxigauge):
     maxigauge.flush_logfile()
-    return static_file('measurement-data.txt', root='./')
+    try:
+        number_of_lines = int(request.query.lines)
+    except:
+        return static_file(logfile, root='./')
+    bytes = getsize(logfile)
+    approximate_number_of_lines = (bytes - 33) / 60
+    print_every = approximate_number_of_lines / (number_of_lines - 1)
+    output = []
+    i = -1
+    for line in open( logfile ):
+        if (i < 0) or (i % print_every == 0):
+            output.append(line)
+        i += 1
+    #response.content_type = 'text/csv'
+    response.content_type = 'text/plain'
+    return output
 
 retdata = []
 @api.route('/pressure_history')
@@ -147,7 +164,7 @@ def pressure_history(maxigauge):
     response.content_type = 'application/json'
     if len(retdata)>0: return json.dumps(retdata)
     maxigauge.flush_logfile()
-    f = open( 'measurement-data.txt', 'r' )
+    f = open( logfile, 'r' )
     import csv
     log = csv.reader(f)
 
