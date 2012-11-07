@@ -252,6 +252,10 @@ def live_cubism():
 def history_rickshaw():
     return static('history_rickshaw.html')
 
+@root.route('/gauge')
+def gauge():
+    return static('gauge.html')
+
 @root.route('/live')
 def live():
     return static('live.html')
