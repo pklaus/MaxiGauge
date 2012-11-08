@@ -1,60 +1,60 @@
 <!doctype>
 <!-- similar to http://code.shutterstock.com/rickshaw/examples/fixed.html -->
 <head>
-    <link type="text/css" rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css">
-    
-    <link type="text/css" rel="stylesheet" href="static/graph.css">
-    <link type="text/css" rel="stylesheet" href="static/detail.css">
-    <link type="text/css" rel="stylesheet" href="static/legend.css">
     <link type="text/css" rel="stylesheet" href="static/extensions.css">
     
     <script src="static/jquery.min.js"></script>
-    <script src="static/jquery-ui.min.js"></script>
 
     <style>
     #content {
-      width: 400px;
+      width: 440px;
       margin-left: auto;
       margin-right: auto;
     }
 
     #gauge_container {
-      height: 350px;
       -moz-column-count: 2;
       -moz-column-gap: 20px;
       -webkit-column-count: 2;
       -webkit-column-gap: 20px;
       column-count: 2;
       column-gap: 20px;
+      height: 300px;
     }
     .gauge {
       column-break-inside: avoid;
       display: inline-block;
-      width: 110px;
-      height: 60px;
+      /* width: 140px; */
+      width: 75%;
       -moz-border-radius: 15px;
       border-radius: 15px;
       background-color: #EEE;
       border: 1px solid #AAA;
       padding: 10px 20px;
-      margin: 10px 20px;
+      margin: 10px 10px;
     }
     .gauge .label {
       font-size: small;
+      position: relative;
+      left: -10px;
+      top: -2px;
       color: #666;
     }
     .gauge .value {
-      font-size: x-large;
+      font-size: 32px;
+      color: #333;
+      font-family: "Courier New", Courier, monospace;
+      font-weight: bold;
     }
     </style>
     
-    <title>Live Gauges</title>
+    <title>Digital Live Display</title>
 </head>
 <body>
 
 
 <div id="content">
-    <h3>Live Vacuum Gauge Pressure Readings displayed as a Gauge</h3>
+    <h3>Live Vacuum Gauge Pressure Readings displayed like a Digital Display</h3>
     <p>The boxes below display the values of the gauges attached to the HHG setup in the COLTRIMS laboratory:</p>
     <div id="gauge_container">
         <div class='gauge'><div class='label'>Gauge 1</div><div class='value' id="gauge1">n/a</div></div>
@@ -64,6 +64,7 @@
         <div class='gauge'><div class='label'>Gauge 5</div><div class='value' id="gauge5">n/a</div></div>
         <div class='gauge'><div class='label'>Gauge 6</div><div class='value' id="gauge6">n/a</div></div>
     </div>
+    <p>All values are given in mbar.</p>
 </div>
 
 <script>
