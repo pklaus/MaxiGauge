@@ -31,17 +31,17 @@
 	display: inline;
 }
 .rickshaw_legend .action:hover {
-	opacity: 0.6;
+	opacity: 0.9;
 }
 .rickshaw_legend .action {
 	margin-right: 0.2em;
 	font-size: 10px;
-	opacity: 0.2;
+	opacity: 0.6;
 	cursor: pointer;
 	font-size: 14px;
 }
 .rickshaw_legend .line.disabled {
-	opacity: 0.4;
+	opacity: 0.2;
 }
 .rickshaw_legend ul {
 	list-style-type: none;
