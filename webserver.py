@@ -43,6 +43,8 @@ import json
 
 import inspect
 
+import datetime
+
 class MaxiGaugePlugin(object):
     ''' This plugin passes a MaxiGauge class handle to route callbacks
 that accept a `maxigauge` keyword argument.
@@ -159,7 +161,7 @@ def pressure_history_csv(maxigauge):
     try:
         number_of_lines = int(request.query.lines)
     except:
-        return static_file(logfilename, root='./')
+        return static_file(logfilename, root='./', mimetype='text/csv', download=('pressure_history_%s.csv' % datetime.date.today().isoformat()) )
     bytes = getsize(logfilename)
     approximate_number_of_lines = (bytes - 33) / 60
     print_every = approximate_number_of_lines / (number_of_lines - 1)
@@ -213,7 +215,6 @@ def pressure_history(maxigauge):
         if len(row) != len(fieldnames): continue
         i = i + 1
         if i%100 != 1: continue
-        print i
         for k,j in enumerate(cols):
             retdata[k]['data'].append({'x': int(row[0]), 'y': 0.0 if row[j].strip() == '' else float(row[j])})
     return json.dumps(retdata)
