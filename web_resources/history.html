@@ -100,7 +100,7 @@ d3.csv("http://messgeraet01.atom.uni-frankfurt.de:8080/api/pressure_history_csv?
     data.splice(i+1,Math.round(data.length/1000));
   }*/
 
-  var cities = color.domain().map(function(name) {
+  var pressures = color.domain().map(function(name) {
     return {
       name: name,
       values: data.map(function(d) {
@@ -115,8 +115,8 @@ d3.csv("http://messgeraet01.atom.uni-frankfurt.de:8080/api/pressure_history_csv?
   x.domain(d3.extent(data, function(d) { return d.Seconds; }));
 
   y.domain([
-    d3.min(cities, function(c) { return d3.min(c.values, function(v) { return v.pressure; }); }),
-    d3.max(cities, function(c) { return d3.max(c.values, function(v) { return v.pressure; }); })
+    d3.min(pressures, function(c) { return d3.min(c.values, function(v) { return v.pressure; }); }),
+    d3.max(pressures, function(c) { return d3.max(c.values, function(v) { return v.pressure; }); })
   ]);
 
   svg.append("g")
@@ -135,17 +135,17 @@ d3.csv("http://messgeraet01.atom.uni-frankfurt.de:8080/api/pressure_history_csv?
       .style("text-anchor", "end")
       .text("Pressure (mbar)");
 
-  var city = svg.selectAll(".city")
-      .data(cities)
+  var pressure = svg.selectAll(".pressure")
+      .data(pressures)
       .enter().append("g")
-      .attr("class", "city");
+      .attr("class", "pressure");
 
-  city.append("path")
+  pressure.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return line(d.values); })
       .style("stroke", function(d) { return color(d.name); });
 
-  city.append("text")
+  pressure.append("text")
       .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
       .attr("transform", function(d) { return "translate(" + x(d.value.date) + "," + y(d.value.pressure) + ")"; })
       .attr("x", 3)
