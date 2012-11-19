@@ -2,56 +2,13 @@
 <!-- similar to http://code.shutterstock.com/rickshaw/examples/fixed.html -->
 <head>
     <link type="text/css" rel="stylesheet" href="static/extensions.css">
+    <link type="text/css" rel="stylesheet" href="static/digital-display.css">
     
     <script src="static/jquery.min.js"></script>
 
-    <style>
-    #content {
-      width: 440px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    #gauge_container {
-      -moz-column-count: 2;
-      -moz-column-gap: 20px;
-      -webkit-column-count: 2;
-      -webkit-column-gap: 20px;
-      column-count: 2;
-      column-gap: 20px;
-      height: 300px;
-    }
-    .gauge {
-      column-break-inside: avoid;
-      display: inline-block;
-      /* width: 140px; */
-      width: 75%;
-      -moz-border-radius: 15px;
-      border-radius: 15px;
-      background-color: #EEE;
-      border: 1px solid #AAA;
-      padding: 10px 20px;
-      margin: 10px 10px;
-    }
-    .gauge .label {
-      font-size: small;
-      position: relative;
-      left: -10px;
-      top: -2px;
-      color: #666;
-    }
-    .gauge .value {
-      font-size: 32px;
-      color: #333;
-      font-family: "Courier New", Courier, monospace;
-      font-weight: bold;
-    }
-    </style>
-    
     <title>Digital Live Display</title>
 </head>
 <body>
-
 
 <div id="content">
     <h3>Live Vacuum Gauge Pressure Readings Shown in the Form of a Digital Display</h3>
@@ -68,11 +25,8 @@
 </div>
 
 <script>
-
 var tv = 500;
-
 var iv = setInterval( function() {
-
     $.ajax({
         url:      '/api/pressures',
         method:   'GET',
@@ -90,9 +44,6 @@ var iv = setInterval( function() {
         error: function(xhr, textStatus, errorThrown){
         }
     });
-
 }, tv );
-
 </script>
-
 </body>

@@ -1,0 +1,40 @@
+#content {
+  width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#gauge_container {
+  -moz-column-count: 2;
+  -moz-column-gap: 20px;
+  -webkit-column-count: 2;
+  -webkit-column-gap: 20px;
+  column-count: 2;
+  column-gap: 20px;
+  height: 300px;
+}
+.gauge {
+  column-break-inside: avoid;
+  display: inline-block;
+  /* width: 140px; */
+  width: 75%;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+  background-color: #EEE;
+  border: 1px solid #AAA;
+  padding: 10px 20px;
+  margin: 10px 10px;
+}
+.gauge .label {
+  font-size: small;
+  position: relative;
+  left: -10px;
+  top: -2px;
+  color: #666;
+}
+.gauge .value {
+  font-size: 32px;
+  color: #333;
+  font-family: "Courier New", Courier, monospace;
+  font-weight: bold;
+}
