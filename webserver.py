@@ -70,7 +70,7 @@ keyword argument.'''
             ### Initialize an instance of the MaxiGauge controller with
             ### the handle of the serial terminal it is connected to
             self.maxigauge = MaxiGauge(self.device)
-            self.maxigauge.start_continuous_pressure_updates(.5, 2)
+            self.maxigauge.start_continuous_pressure_updates(.5, 60)
         except Exception, e:
             raise PluginError("Could not connect to the MaxiGauge (on port %s). Error: %s" % (self.device, e) )
 

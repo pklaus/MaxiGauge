@@ -28,6 +28,7 @@
 import serial
 import time
 import signal
+import math
 
 class MaxiGauge (object):
     def __init__(self, serialPort, baud=9600, debug=False):
@@ -110,13 +111,19 @@ class MaxiGauge (object):
         #self.history = history
         #log = None
         #f.close()
-
+        cache = []
         while not self.stopping_continuous_update.isSet():
             startTime = time.time()
             self.update_counter += 1
             self.cached_pressures = self.pressures()
+            cache.append([time.time()] + [sensor.pressure if sensor.status in [0,1,2] else float('nan') for sensor in self.cached_pressures] )
             if self.log_every > 0 and (self.update_counter%self.log_every == 0):
-                self.log_to_file()
+                logtime = cache[self.log_every/2][0]
+                cache = zip(*cache) # transpose cache
+                cache = cache[1:] # remove first element
+                avgs = [(sum(vals)/self.log_every) for vals in cache]
+                self.log_to_file(logtime=logtime, logvalues=avgs)
+                cache = []
             time.sleep(0.1) # we want a minimum pause of 0.1 s
             while not self.stopping_continuous_update.isSet() and (self.update_time - (time.time()-startTime) > .2):
                 time.sleep(.2)
@@ -128,18 +135,16 @@ class MaxiGauge (object):
         #interrupt_main()
 
 
-    def log_to_file(self):
+    def log_to_file(self, logtime = None, logvalues = None):
         try:
             self.logfile
         except:
             self.logfile = file(self.logfilename, 'a')
-        line = "%d, " % int(time.time())
-        for sensor in self.cached_pressures:
-            #print sensor
-            if sensor.status in [0,1,2]:
-                line += "%.3E" % sensor.pressure
-            line += ", "
-        line = line[0:-2] # omit the last comma and space
+        if not logtime:
+            logtime = time.time()
+        if not logvalues:
+            logvalues = [sensor.pressure if sensor.status in [0,1,2] else float('nan') for sensor in self.cached_pressures]
+        line = "%d, " % logtime + ', '.join(["%.3E" % val if not math.isnan(val) else '' for val in logvalues])
         self.logfile.write(line+'\n')
         #self.history.append([int(time.time())] + [sensor.pressure if sensor.status in [0,1,2] else None for sensor in self.cached_pressures])
         #self.flush_logfile()
