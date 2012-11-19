@@ -1,14 +1,16 @@
-This is a Python software to log vacuum pressure values
-from a Pfeiffer Vacuum MaxiGauge vacuum gauge controller.
+## MaxiGauge
 
-It is capable to display vacuum pressure values live on
+This is a software written in Python to log vacuum pressure values
+from a Pfeiffer-Vacuum MaxiGauge vacuum gauge controller.
+
+It is capable of displaying vacuum pressure values live on
 the web and logging them to a file.
 
 ### Requirements
 
 * [Python][] 2.7
 * [PySerial][] to communicate with the MaxiGauge via the RS232 port.
-* To start the web server, you need [Bottle][].
+* [Bottle][] to start the web server.
 
 ### License
 
