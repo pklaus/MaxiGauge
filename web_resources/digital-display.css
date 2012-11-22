@@ -11,19 +11,20 @@
   -webkit-column-gap: 20px;
   column-count: 2;
   column-gap: 20px;
-  height: 300px;
 }
 .gauge {
   column-break-inside: avoid;
   display: inline-block;
   /* width: 140px; */
-  width: 75%;
+  width: 79%;
   -moz-border-radius: 15px;
   border-radius: 15px;
   background-color: #EEE;
   border: 1px solid #AAA;
   padding: 10px 20px;
-  margin: 10px 10px;
+  margin-left: 10px;
+  margin-top: 20px;
+  margin-right: 0;
 }
 .gauge .label {
   font-size: small;
