@@ -1,0 +1,5 @@
+bottle==0.12.23
+CherryPy==8.9.0
+pyserial==3.5
+PyYAML==5.4.1; python_version < "3"
+PyYAML==6.0; python_version >= "3"

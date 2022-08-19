@@ -1,4 +1,4 @@
-## MaxiGauge
+# MaxiGauge
 
 This is a software written in Python to log vacuum pressure values
 from a Pfeiffer-Vacuum MaxiGauge vacuum gauge controller.
@@ -6,13 +6,23 @@ from a Pfeiffer-Vacuum MaxiGauge vacuum gauge controller.
 It is capable of displaying vacuum pressure values live on
 the web and logging them to a file.
 
-### Requirements
+## Requirements
 
-* [Python][] 2.7
+* [Python][] (works with 2.7 and >= 3)
 * [PySerial][] to communicate with the MaxiGauge via the RS232 port.
+* [PyYAML][] to load settings from yaml file.
 * [Bottle][] to start the web server.
+* [CherryPy][] to use as a different web server.
 
-### License
+## Getting started
+
+1. install the dependencies: `python -m pip install -r requirements.txt` (
+   or `python3 -m pip install -r requirements.txt` if you're using python3 explicitly)
+2. change port and logfile name in [settings.yml][] to the appropriate values
+3. (optional) change the desired webserver at the bottom of [webserver.py][]
+4. start the server: run `./webserver.py` (or `python webserver.py` or `python3 webserver.py` to specify a version)
+
+## License
 
 Copyright (C) 2012 Philipp Klaus (Institut fuer Kernphysik Frankfurt)
 
@@ -27,10 +37,10 @@ libraries d3, Rickshaw, jQuery and cubism!
 > distribute, sublicense, and/or sell copies of the Software, and to
 > permit persons to whom the Software is furnished to do so, subject to
 > the following conditions:
-> 
+>
 > The above copyright notice and this permission notice shall be
 > included in all copies or substantial portions of the Software.
-> 
+>
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 > EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 > MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -40,5 +50,15 @@ libraries d3, Rickshaw, jQuery and cubism!
 > SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [Python]: http://www.python.org/getit/
-[PySerial]: http://pyserial.sourceforge.net/
+
+[PySerial]: https://pypi.org/project/pyserial/
+
+[PyYAML]: https://pyyaml.org/
+
 [Bottle]: http://bottlepy.org
+
+[CherryPy]: https://cherrypy.dev/
+
+[settings.yml]: settings.yml
+
+[webserver.py]: webserver.py

@@ -1,3 +1,5 @@
+.idea/
+.python-version
 measurement-data*
 extract_every_nth_line
 *.pyc
