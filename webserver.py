@@ -76,7 +76,7 @@ class MaxiGaugePlugin(object):
             # Initialize an instance of the MaxiGauge controller with
             # the handle of the serial terminal it is connected to
             self.maxigauge = MaxiGauge(self.device)
-            # self.maxigauge.start_continuous_pressure_updates(.4, 75)
+            self.maxigauge.start_continuous_pressure_updates(.4, 75)
         except Exception as e:
             raise PluginError("Could not connect to the MaxiGauge (on port %s). Error: %s" % (self.device, e))
 
