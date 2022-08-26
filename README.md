@@ -8,7 +8,7 @@ the web and logging them to a file.
 
 ## Requirements
 
-* [Python][] (works with 2.7 and >= 3)
+* [Python][] (works only with python 2, not python 3)
 * [PySerial][] to communicate with the MaxiGauge via the RS232 port.
 * [PyYAML][] to load settings from yaml file.
 * [Bottle][] to start the web server.
@@ -16,11 +16,13 @@ the web and logging them to a file.
 
 ## Getting started
 
-1. install the dependencies: `python -m pip install -r requirements.txt` (
-   or `python3 -m pip install -r requirements.txt` if you're using python3 explicitly)
+1. install the dependencies: `python -m pip install -r requirements.txt`
 2. change port and logfile name in [settings.yml][] to the appropriate values
 3. (optional) change the desired webserver at the bottom of [webserver.py][]
-4. start the server: run `./webserver.py` (or `python webserver.py` or `python3 webserver.py` to specify a version)
+4. start the server: run `./webserver.py`
+   1. if you get a permission error for the used port/device, you may need to add your user to the `dialout` group:
+      1. `sudo usermod -aG dialout $USER`
+      2. `newgrp dialout` (or log out and back in)g
 
 ## License
 
