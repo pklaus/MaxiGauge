@@ -1,0 +1,2 @@
+serial_port: '/dev/ttyUSB0'  # change this to the desired serial port
+logfile_name: 'measurement-data.txt'  # change this to the desired logfile name
